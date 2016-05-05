@@ -10,9 +10,9 @@ Example
 This is an example for the ESP8266 port of Micropython::
 
     from machine import I2C, Pin
-    import ht16k33
+    from ht16k33_matrix import Matrix8x8
     i2c = I2C(sda=Pin(4), scl=Pin(5))
-    display = ht16k33.Matrix8x8()
+    display = Matrix8x8(i2c)
     display.brightness(8)
     display.blink_rate(2)
     display.fill(True)
