@@ -142,7 +142,7 @@ class Seg14x4(HT16K33):
         self.buffer[index * 2 + 1] = CHARS[c]
 
     def push(self, char):
-        if char != '.' and not self.buffer[7] & 0b01000000:
+        if char != '.' or self.buffer[7] & 0b01000000:
             self.scroll()
         self.put(char, 3)
 
