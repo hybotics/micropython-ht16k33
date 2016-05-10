@@ -175,7 +175,7 @@ class Seg7x4(Seg14x4):
             return
         char = char.lower()
         if char == '.':
-            self.buffer[index * 2 + 1] |= 0b01000000
+            self.buffer[index * 2 + 1] |= 0b10000000
             return
         elif char in 'abcdef':
             c = ord(char) - 97 + 10
