@@ -152,11 +152,15 @@ class Seg14x4(HT16K33):
 
     def number(self, number):
         s = "{:f}".format(number)
+        if len(s) > 4:
+            raise ValueError("Overflow")
         self.fill(False)
         self.text(s)
 
     def hex(self, number):
         s = "{:x}".format(number)
+        if len(s) > 4:
+            raise ValueError("Overflow")
         self.fill(False)
         self.text(s)
 
