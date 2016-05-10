@@ -134,7 +134,7 @@ class Seg14x4(HT16K33):
             return
         if not 32 <= ord(char) <= 127:
             return
-        if char == '.':
+        if char == '.' and not self.buffer[index * 2 + 1] & 0b01000000:
             self.buffer[index * 2 + 1] |= 0b01000000
             return
         c = ord(char) * 2 + 32
