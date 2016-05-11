@@ -3,7 +3,7 @@ from ht16k33_matrix import HT16K33
 
 CHARS = [
     0b00000000, 0b00000000, #
-    0b00000000, 0b00000110, # !
+    0b01000000, 0b00000110, # !
     0b00000010, 0b00100000, # "
     0b00010010, 0b11001110, # #
     0b00010010, 0b11101101, # $
@@ -33,7 +33,7 @@ CHARS = [
     0b00100100, 0b00000000, # <
     0b00000000, 0b11001000, # =
     0b00001001, 0b00000000, # >
-    0b00010000, 0b10000011, # ?
+    0b01100000, 0b10100011, # ?
     0b00000010, 0b10111011, # @
     0b00000000, 0b11110111, # A
     0b00010010, 0b10001111, # B
@@ -62,7 +62,7 @@ CHARS = [
     0b00010101, 0b00000000, # Y
     0b00001100, 0b00001001, # Z
     0b00000000, 0b00111001, # [
-    0b00100001, 0b00000000, #
+    0b00100001, 0b00000000, # \
     0b00000000, 0b00001111, # ]
     0b00001100, 0b00000011, # ^
     0b00000000, 0b00001000, # _
@@ -137,12 +137,13 @@ class Seg14x4(HT16K33):
         if char == '.':
             self.buffer[index * 2 + 1] |= 0b01000000
             return
-        c = ord(char) * 2 + 32
+        c = ord(char) * 2 - 64
         self.buffer[index * 2] = CHARS[1 + c]
         self.buffer[index * 2 + 1] = CHARS[c]
 
     def push(self, char):
         if char != '.' or self.buffer[7] & 0b01000000:
+            self.put(' ', 3)
             self.scroll()
         self.put(char, 3)
 
@@ -153,7 +154,8 @@ class Seg14x4(HT16K33):
     def number(self, number):
         s = "{:f}".format(number)
         if len(s) > 4:
-            raise ValueError("Overflow")
+            if s.find('.') > 4:
+                raise ValueError("Overflow")
         self.fill(False)
         self.text(s)
 
