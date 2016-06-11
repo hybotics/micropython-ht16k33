@@ -30,9 +30,9 @@ CHARS = [
     0b00000000, 0b11101111, # 9
     0b00010010, 0b00000000, # :
     0b00001010, 0b00000000, # ;
-    0b00100100, 0b00000000, # <
+    0b00100100, 0b01000000, # <
     0b00000000, 0b11001000, # =
-    0b00001001, 0b00000000, # >
+    0b00001001, 0b10000000, # >
     0b01100000, 0b10100011, # ?
     0b00000010, 0b10111011, # @
     0b00000000, 0b11110111, # A
@@ -157,7 +157,10 @@ class Seg14x4(HT16K33):
             if s.find('.') > 4:
                 raise ValueError("Overflow")
         self.fill(False)
-        self.text(s)
+        places = 4
+        if '.' in s:
+            places += 1
+        self.text(s[:places])
 
     def hex(self, number):
         s = "{:x}".format(number)
@@ -168,20 +171,28 @@ class Seg14x4(HT16K33):
 
 
 class Seg7x4(Seg14x4):
+    P = [0, 2, 6, 8]
+
     def scroll(self, count=1):
         if count >= 0:
             offset = 0
         else:
             offset = 1
         for i in range(3):
-            self.buffer[i + offset] = self.buffer[i + count]
+            self.buffer[self.P[i + offset]] = self.buffer[self.P[i + count]]
+
+    def push(self, char):
+        if char in ':;':
+            self.put(char)
+        else:
+            super().push(char)
 
     def put(self, char, index=0):
         if not 0 <= index <= 3:
             return
         char = char.lower()
         if char == '.':
-            self.buffer[index * 2 + 1] |= 0b10000000
+            self.buffer[self.P[index]] |= 0b10000000
             return
         elif char in 'abcdef':
             c = ord(char) - 97 + 10
@@ -189,6 +200,14 @@ class Seg7x4(Seg14x4):
             c = 16
         elif char in '0123456789':
             c = ord(char) - 48
+        elif char == ' ':
+            c = 0x00
+        elif char == ':':
+            self.buffer[4] = 0x02
+            return
+        elif char == ';':
+            self.buffer[4] = 0x00
+            return
         else:
             return
-        self.buffer[index] = NUMBERS[c]
+        self.buffer[self.P[index]] = NUMBERS[c]
