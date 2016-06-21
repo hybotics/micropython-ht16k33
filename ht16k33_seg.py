@@ -1,7 +1,7 @@
 from ht16k33_matrix import HT16K33
 
 
-CHARS = [
+CHARS = (
     0b00000000, 0b00000000, #
     0b01000000, 0b00000110, # !
     0b00000010, 0b00100000, # "
@@ -98,8 +98,8 @@ CHARS = [
     0b00100100, 0b10001001, # }
     0b00000101, 0b00100000, # ~
     0b00111111, 0b11111111,
-]
-NUMBERS = [
+)
+NUMBERS = (
     0x3F, # 0
     0x06, # 1
     0x5B, # 2
@@ -117,11 +117,14 @@ NUMBERS = [
     0x79, # E
     0x71, # F
     0x40, # -
-]
+)
 
 
 class Seg14x4(HT16K33):
+    """The alpha-numeric 14-segment display."""
+
     def scroll(self, count=1):
+        """Scroll the display by specified number of places."""
         if count >= 0:
             offset = 0
         else:
@@ -130,6 +133,7 @@ class Seg14x4(HT16K33):
             self.buffer[i + offset] = self.buffer[i + 2 * count]
 
     def put(self, char, index=0):
+        """Put a character at the specified place."""
         if not 0 <= index <= 3:
             return
         if not 32 <= ord(char) <= 127:
@@ -142,16 +146,19 @@ class Seg14x4(HT16K33):
         self.buffer[index * 2 + 1] = CHARS[c]
 
     def push(self, char):
+        """Scroll the display and add a character at the end."""
         if char != '.' or self.buffer[7] & 0b01000000:
             self.scroll()
             self.put(' ', 3)
         self.put(char, 3)
 
     def text(self, text):
+        """Display the specified text."""
         for c in text:
             self.push(c)
 
     def number(self, number):
+        """Display the specified decimal number."""
         s = "{:f}".format(number)
         if len(s) > 4:
             if s.find('.') > 4:
@@ -163,6 +170,7 @@ class Seg14x4(HT16K33):
         self.text(s[:places])
 
     def hex(self, number):
+        """Display the specified hexadecimal number."""
         s = "{:x}".format(number)
         if len(s) > 4:
             raise ValueError("Overflow")
@@ -171,9 +179,12 @@ class Seg14x4(HT16K33):
 
 
 class Seg7x4(Seg14x4):
-    P = [0, 2, 6, 8]
+    """The numeric 7-segment display."""
+
+    P = [0, 2, 6, 8] #  The positions of characters.
 
     def scroll(self, count=1):
+        """Scroll the display by specified number of places."""
         if count >= 0:
             offset = 0
         else:
@@ -182,12 +193,14 @@ class Seg7x4(Seg14x4):
             self.buffer[self.P[i + offset]] = self.buffer[self.P[i + count]]
 
     def push(self, char):
+        """Scroll the display and add a character at the end."""
         if char in ':;':
             self.put(char)
         else:
             super().push(char)
 
     def put(self, char, index=0):
+        """Put a character at the specified place."""
         if not 0 <= index <= 3:
             return
         char = char.lower()
