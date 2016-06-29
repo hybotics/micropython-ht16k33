@@ -62,16 +62,19 @@ class HT16K33:
             self.buffer[y * 2 + 1] &= ~(mask >> 8)
 
 
-class Matrix8x16(HT16K33):
+class Matrix16x8(HT16K33):
     """The double matrix."""
 
     def pixel(self, x, y, color=None):
         """Set a single pixel in the frame buffer to specified color."""
         if not 0 <= x <= 15:
             return
-        if not 0 <= y <= 8:
+        if not 0 <= y <= 7:
             return
-        return super()._pixel(x, y, color)
+        if x >= 8:
+            x -= 8
+            y += 8
+        return super()._pixel(y, x, color)
 
 
 class Matrix8x8(HT16K33):
@@ -79,9 +82,9 @@ class Matrix8x8(HT16K33):
 
     def pixel(self, x, y, color=None):
         """Set a single pixel in the frame buffer to specified color."""
-        if not 0 <= x <= 8:
+        if not 0 <= x <= 7:
             return
-        if not 0 <= y <= 8:
+        if not 0 <= y <= 7:
             return
         x = (x - 1) % 8
         return super()._pixel(x, y, color)
