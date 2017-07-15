@@ -1,3 +1,7 @@
+from micropython import const
+import framebuf
+
+
 _HT16K33_BLINK_CMD = const(0x80)
 _HT16K33_BLINK_DISPLAYON = const(0x01)
 _HT16K33_CMD_BRIGHTNESS = const(0xE0)
@@ -9,11 +13,20 @@ class HT16K33:
         self.i2c = i2c
         self.address = address
         self._temp = bytearray(1)
-        self.buffer = bytearray(16)
-        self.fill(0)
+
+        self._buffer = bytearray(16)
+        self._fb_buffer = bytearray(self.WIDTH * self.HEIGHT
+                                    * self.FB_BPP // 8)
+        self.framebuffer = framebuf.FrameBuffer(
+            self._fb_buffer, self.WIDTH, self.HEIGHT, self.FORMAT)
+
+        self.framebuffer.fill(0)
         self._write_cmd(_HT16K33_OSCILATOR_ON)
         self.blink_rate(0)
         self.brightness(15)
+
+        self.pixel = self.framebuffer.pixel
+        self.fill = self.framebuffer.fill
 
     def _write_cmd(self, byte):
         self._temp[0] = byte
@@ -35,62 +48,50 @@ class HT16K33:
         self._write_cmd(_HT16K33_CMD_BRIGHTNESS | brightness)
 
     def show(self):
-        self.i2c.writeto_mem(self.address, 0x00, self.buffer)
-
-    def fill(self, color):
-        fill = 0xff if color else 0x00
-        for i in range(16):
-            self.buffer[i] = fill
-
-    def _pixel(self, x, y, color=None):
-        mask = 1 << x
-        if color is None:
-            return bool((self.buffer[y] | self.buffer[y + 1] << 8) & mask)
-        if color:
-            self.buffer[y * 2] |= mask & 0xff
-            self.buffer[y * 2 + 1] |= mask >> 8
-        else:
-            self.buffer[y * 2] &= ~(mask & 0xff)
-            self.buffer[y * 2 + 1] &= ~(mask >> 8)
+        self._copy_buf()
+        self.i2c.writeto_mem(self.address, 0x00, self._buffer)
 
 
 class Matrix16x8(HT16K33):
-    def pixel(self, x, y, color=None):
-        if not 0 <= x <= 15:
-            return
-        if not 0 <= y <= 7:
-            return
-        if x >= 8:
-            x -= 8
-            y += 8
-        return super()._pixel(y, x, color)
+    WIDTH = 16
+    HEIGHT = 8
+    FORMAT = framebuf.MONO_HLSB
+    FB_BPP = 1
+
+    def _copy_buf(self):
+        for y in range(8):
+            self._buffer[y * 2] = self._fb_buffer[y]
 
 
 class Matrix8x8(HT16K33):
-    def pixel(self, x, y, color=None):
-        if not 0 <= x <= 7:
-            return
-        if not 0 <= y <= 7:
-            return
-        x = (x - 1) % 8
-        return super()._pixel(x, y, color)
+    WIDTH = 8
+    HEIGHT = 8
+    FORMAT = framebuf.MONO_HLSB
+    FB_BPP = 1
+
+    def _copy_buf(self):
+        for y in range(8):
+            b = self._fb_buffer[y]
+            self._buffer[y * 2] = (b >> 1) | (b << 7)
 
 
 class Matrix8x8x2(HT16K33):
-    def pixel(self, x, y, color=None):
-        if not 0 <= x <= 7:
-            return
-        if not 0 <= y <= 7:
-            return
-        if color is not None:
-            super()._pixel(y, x, (color & 0x01))
-            super()._pixel(y + 8, x, (color >> 1) & 0x01)
-        else:
-            return super()._pixel(y, x) | super()._pixel(y + 8, x) << 1
+    WIDTH = 8
+    HEIGHT = 8
+    FORMAT = framebuf.GS4_HMSB
+    FB_BPP = 4
 
-    def fill(self, color):
-        fill1 = 0xff if color & 0x01 else 0x00
-        fill2 = 0xff if color & 0x02 else 0x00
-        for i in range(8):
-            self.buffer[i * 2] = fill1
-            self.buffer[i * 2 + 1] = fill2
+    def _copy_buf(self):
+        pixel = self.framebuffer.pixel
+        _buffer = self._buffer
+        for y in range(8):
+            b = 0
+            for x in range(8):
+                color = pixel(x, y)
+                if color & 0x01:
+                    b |= 0x01 << x
+                if color & 0x02:
+                    b |= 0x01 << (x + 8)
+            _buffer[y * 2] = b & 0xff
+            _buffer[y * 2 + 1] = (b >> 8) & 0xff
+
