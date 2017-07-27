@@ -27,6 +27,11 @@ Matrices
 
         Get or set the color of a given pixel.
 
+    .. attribute:: framebuffer
+
+        The underlying `FrameBuffer <https://docs.micropython.org/en/latest/esp8266/library/framebuf.html>`_
+        object.
+
 .. class:: Matrix16x18
 
     A double matrix or the matrix wing.
