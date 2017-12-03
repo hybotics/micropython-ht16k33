@@ -41,6 +41,11 @@ class HT16K33:
     def show(self):
         self.i2c.writeto_mem(self.address, 0x00, self.buffer)
 
+    def fill(self, color):
+        fill = 0xff if color else 0x00
+        for i in range(16):
+            self.buffer[i] = fill
+
 
 class HT16K33Matrix:
     def __init__(self, i2c, address=0x70):
