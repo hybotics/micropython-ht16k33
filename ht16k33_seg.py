@@ -165,7 +165,7 @@ class Seg14x4(HT16K33):
 
         Returns: The output text string to be displayed.
     '''
-    def number(self, number, nrDec = 0):
+    def number(self, number, decimal = 0):
         s = "{:f}".format(number)
         places = 0
 
@@ -177,10 +177,10 @@ class Seg14x4(HT16K33):
 
             if (dot > 5):
                 raise ValueError("Input overflow - {0} is too large for the display!".format(number))
-            elif ((dot > 0) and (nrDec == 0)):
+            elif ((dot > 0) and (decimal == 0)):
                 places = dot
 
-        if ((places <= 0) and (nrDec > 0)):
+        if ((places <= 0) and (decimal > 0)):
             self.fill(False)
             places = 4
 			
@@ -190,8 +190,8 @@ class Seg14x4(HT16K33):
         if self.debug:
             print("(2) places = {0}, dot = '{1}', decimal = {2}, s = '{3}'".format(places, dot, decimal, s))
 
-        #	Set decimal places, if number of decimal places is specified (nrDec > 0)	
-        if ((places > 0) and (nrDec > 0) and (dot > 0) and (len(s[places:]) > decimal)):
+        #	Set decimal places, if number of decimal places is specified (decimal > 0)	
+        if ((places > 0) and (decimal > 0) and (dot > 0) and (len(s[places:]) > decimal)):
             txt = s[:dot + decimal + 1]
         elif (places > 0):
             txt = s[:places]
