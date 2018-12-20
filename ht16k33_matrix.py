@@ -47,7 +47,7 @@ class HT16K33:
             self.buffer[i] = fill
 
 
-class HT16K33Matrix:
+class HT16K33Matrix(HT16K33):
     def __init__(self, i2c, address=0x70):
         super().__init__(i2c, address)
 
