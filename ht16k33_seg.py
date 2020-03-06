@@ -156,7 +156,7 @@ class Seg14x4(HT16K33):
 
     '''
 		Display a floating point or integer number on the Adafruit HT16K33 based displays
-		
+
 		Param: number - The floating point or integer number to be displayed, which must be
 			in the range 0 (zero) to 9999 for integers and floating point or integer numbers
 			and between 0.0 and 999.0 or 99.00 or 9.000 for floating point numbers.
@@ -183,7 +183,7 @@ class Seg14x4(HT16K33):
         if ((places <= 0) and (decimal > 0)):
             self.fill(False)
             places = 4
-			
+
             if '.' in s:
                 places += 1
 
@@ -204,7 +204,7 @@ class Seg14x4(HT16K33):
             raise ValueError("Output string ('{0}') is too long!".format(txt))
 
         self.text(txt)
-        
+
         return txt
 
     def hex(self, number):
