@@ -156,7 +156,7 @@ class Seg14x4(HT16K33):
 
     '''
 		Display a floating point or integer number on the Adafruit HT16K33 based displays
-		
+
 		Param: number - The floating point or integer number to be displayed, which must be
 			in the range 0 (zero) to 9999 for integers and floating point or integer numbers
 			and between 0.0 and 999.0 or 99.00 or 9.000 for floating point numbers.
@@ -165,7 +165,7 @@ class Seg14x4(HT16K33):
 
         Returns: The output text string to be displayed.
     '''
-    def number(self, number, nrDec = 0):
+    def number(self, number, decimal = 0):
         s = "{:f}".format(number)
         places = 0
 
@@ -177,21 +177,21 @@ class Seg14x4(HT16K33):
 
             if (dot > 5):
                 raise ValueError("Input overflow - {0} is too large for the display!".format(number))
-            elif ((dot > 0) and (nrDec == 0)):
+            elif ((dot > 0) and (decimal == 0)):
                 places = dot
 
-        if ((places <= 0) and (nrDec > 0)):
+        if ((places <= 0) and (decimal > 0)):
             self.fill(False)
             places = 4
-			
+
             if '.' in s:
                 places += 1
 
         if self.debug:
             print("(2) places = {0}, dot = '{1}', decimal = {2}, s = '{3}'".format(places, dot, decimal, s))
 
-        #	Set decimal places, if number of decimal places is specified (nrDec > 0)	
-        if ((places > 0) and (nrDec > 0) and (dot > 0) and (len(s[places:]) > decimal)):
+        #	Set decimal places, if number of decimal places is specified (decimal > 0)	
+        if ((places > 0) and (decimal > 0) and (dot > 0) and (len(s[places:]) > decimal)):
             txt = s[:dot + decimal + 1]
         elif (places > 0):
             txt = s[:places]
@@ -204,7 +204,7 @@ class Seg14x4(HT16K33):
             raise ValueError("Output string ('{0}') is too long!".format(txt))
 
         self.text(txt)
-        
+
         return txt
 
     def hex(self, number):

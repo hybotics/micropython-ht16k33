@@ -1,12 +1,10 @@
 from micropython import const
 import framebuf
 
-
 _HT16K33_BLINK_CMD = const(0x80)
 _HT16K33_BLINK_DISPLAYON = const(0x01)
 _HT16K33_CMD_BRIGHTNESS = const(0xE0)
 _HT16K33_OSCILATOR_ON = const(0x21)
-
 
 class HT16K33:
     def __init__(self, i2c, address=0x70):
@@ -46,7 +44,6 @@ class HT16K33:
         for i in range(16):
             self.buffer[i] = fill
 
-
 class HT16K33Matrix:
     def __init__(self, i2c, address=0x70):
         super().__init__(i2c, address)
@@ -64,7 +61,6 @@ class HT16K33Matrix:
         self._copy_buf()
         super().show()
 
-
 class Matrix16x8(HT16K33Matrix):
     WIDTH = 16
     HEIGHT = 8
@@ -74,7 +70,6 @@ class Matrix16x8(HT16K33Matrix):
     def _copy_buf(self):
         for y in range(8):
             self.buffer[y * 2] = self._fb_buffer[y]
-
 
 class Matrix8x8(HT16K33Matrix):
     WIDTH = 8
@@ -107,4 +102,3 @@ class Matrix8x8x2(HT16K33Matrix):
                     b |= 0x01 << (x + 8)
             _buffer[y * 2] = b & 0xff
             _buffer[y * 2 + 1] = (b >> 8) & 0xff
-
