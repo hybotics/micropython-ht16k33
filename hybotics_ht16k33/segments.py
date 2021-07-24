@@ -1,4 +1,4 @@
-from ht16k33.ht16k33 import HT16K33
+from hybotics_ht16k33.ht16k33 import HT16K33
 from utime import sleep
 
 CHARS = (

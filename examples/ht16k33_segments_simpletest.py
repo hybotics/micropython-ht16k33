@@ -11,7 +11,7 @@ from utime import sleep
 # Import all board pins.
 from machine import SoftI2C, Pin
 # Import the HT16K33 LED segment module.
-from ht16k33.segments import Seg14x4
+from hybotics_ht16k33.segments import Seg14x4
 # Import special stuff for tinyPico
 from tinypico import I2C_SDA, I2C_SCL
 
@@ -32,11 +32,6 @@ display = Seg14x4(i2c)
 # display = segments.BigSeg7x4(i2c)
 # Finally you can optionally specify a custom I2C address of the HT16k33 like:
 # display = segments.Seg7x4(i2c, address=0x70)
-print()
-print("Before Starting Up")
-print()
-print("Sleeping for 5 seconds...")
-sleep(5.0)
 
 try:
   print()
@@ -67,15 +62,6 @@ try:
   sleep(DELAY_BETWEEN_SEC)
   display.fill(0)
 
-  # Or, print the time
-  time_string = "11:50"
-  print("Printing a time string - '{0}'".format(time_string))
-  display.colon = True
-  display.print(time_string)
-  sleep(DELAY_BETWEEN_SEC)
-  display.colon = False
-  display.fill(0)
-
   # Or, can set indivdual digits / characters
   # Set the first character to '1':
   display[0] = "1"
@@ -89,18 +75,18 @@ try:
   display.fill(0)
 
   # Or, can even set the segments to make up characters
-  if isinstance(display, segments.Seg7x4):
-      # 7-segment raw digits
-      display.set_digit_raw(0, 0xFF)
-      display.set_digit_raw(1, 0b11111111)
-      display.set_digit_raw(2, 0x79)
-      display.set_digit_raw(3, 0b01111001)
-  else:
+  if isinstance(display, Seg14x4):
       # 14-segment raw digits
       display.set_digit_raw(0, 0x2D3F)
       display.set_digit_raw(1, 0b0010110100111111)
       display.set_digit_raw(2, (0b00101101, 0b00111111))
       display.set_digit_raw(3, [0x2D, 0x3F])
+  else:
+      # 7-segment raw digits
+      display.set_digit_raw(0, 0xFF)
+      display.set_digit_raw(1, 0b11111111)
+      display.set_digit_raw(2, 0x79)
+      display.set_digit_raw(3, 0b01111001)
 
   sleep(DELAY_BETWEEN_SEC)
   display.fill(0)

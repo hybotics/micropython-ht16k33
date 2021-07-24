@@ -1,6 +1,6 @@
 from micropython import const
 from utime import sleep
-from bus_device import i2c_device
+from adafruit_bus_device import i2c_device
 
 _HT16K33_BLINK_CMD = const(0x80)
 _HT16K33_BLINK_DISPLAYON = const(0x01)
