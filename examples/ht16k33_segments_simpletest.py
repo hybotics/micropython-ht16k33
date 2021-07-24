@@ -11,42 +11,21 @@ from utime import sleep
 # Import all board pins.
 from machine import SoftI2C, Pin
 # Import the HT16K33 LED segment module.
-from ht16k33 import segments
+from ht16k33.segments import Seg14x4
 # Import special stuff for tinyPico
 from tinypico import I2C_SDA, I2C_SCL
-
-LED_YELLOW = const(4)
-LED_GREEN = const(5)
-LED_BLINK_RATE_SEC = 0.2
-LED_NR_CYCLES = 1
 
 TP_SDA = Pin(I2C_SDA)
 TP_SCL = Pin(I2C_SCL) 
 
 DELAY_BETWEEN_SEC = 4
 
-led_yellow = Pin(LED_YELLOW, Pin.OUT)
-led_yellow.value(False)
-
-led_green = Pin(LED_GREEN, Pin.OUT)
-led_green.value(False)
-
-def blink_led(led, cycles=LED_NR_CYCLES, rate_ms=LED_BLINK_RATE_SEC):
-  for cyc in range(cycles):
-    led.value(True)
-    sleep(rate_ms)
-    led.value(False) 
-    sleep(rate_ms)
-
-blink_led(led_yellow, 2)
-blink_led(led_green, 2)
-
 # Create the I2C interface.
 i2c = SoftI2C(sda=TP_SDA, scl=TP_SCL, freq=400000)
 
 # Create the LED segment class.
 # This creates a 7 segment 4 character display:
-display = segments.Seg14x4(i2c)
+display = Seg14x4(i2c)
 # Or this creates a 14 segment alphanumeric 4 character display:
 # display = segments.Seg14x4(i2c)
 # Or this creates a big 7 segment 4 character display
