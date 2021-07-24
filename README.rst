@@ -6,3 +6,6 @@ It supports Adafruit's 16x8 and 8x8 matrices, as well as 7-Segment Numeric and
 14-Segment Alphanumeric displays.
 
 Documentation at http://micropython-ht16k33.readthedocs.io/
+
+NOTE: At this time, only the 14 segment 4 character displays have been tested.
+  Others *may* work but have not been tested so be warned.
