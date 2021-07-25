@@ -5,13 +5,12 @@
 # This example and library is meant to work with Adafruit CircuitPython API.
 # Author: Tony DiCola
 # License: Public Domain
-from micropython import const
 from utime import sleep
 
 # Import all board pins.
 from machine import SoftI2C, Pin
 # Import the HT16K33 LED segment module.
-from hybotics_ht16k33.segments import Seg14x4
+from hybotics_ht16k33.segments import Seg14x4       # Can also be Seg7x4, BigSeg7x4
 # Import special stuff for tinyPico
 from tinypico import I2C_SDA, I2C_SCL
 
@@ -25,13 +24,13 @@ i2c = SoftI2C(sda=TP_SDA, scl=TP_SCL, freq=400000)
 
 # Create the LED segment class.
 # This creates a 7 segment 4 character display:
-display = Seg14x4(i2c)
+# display = Seg7x4(i2c)
 # Or this creates a 14 segment alphanumeric 4 character display:
-# display = segments.Seg14x4(i2c)
+display = Seg14x4(i2c)
 # Or this creates a big 7 segment 4 character display
-# display = segments.BigSeg7x4(i2c)
+# display = BigSeg7x4(i2c)
 # Finally you can optionally specify a custom I2C address of the HT16k33 like:
-# display = segments.Seg7x4(i2c, address=0x70)
+# display = Seg7x4(i2c, address=0x70)
 
 try:
   print()
