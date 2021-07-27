@@ -130,12 +130,12 @@ class Seg14x4(HT16K33):
         # Use colon for controling two-dots indicator at the center (index 0)
         self._colon = Colon(self)
 
-    def print(self, value, decimal=0):
+    def print(self, value, decimal=0, auto_round=False):
         """Print the value to the display."""
         if isinstance(value, (str)):
             self._text(value)
         elif isinstance(value, (int, float)):
-            self._number(value, decimal)
+            self._number(value, decimal, auto_round)
         else:
             raise ValueError("Unsupported display value type: {}".format(type(value)))
         if self._auto_write:
@@ -189,7 +189,7 @@ class Seg14x4(HT16K33):
         for character in text:
             self._push(character)
 
-    def _number(self, number, decimal=0):
+    def _number(self, number, decimal=None, auto_round=False):
         """
         Display a floating point or integer number on the Adafruit HT16K33 based displays
 
@@ -201,10 +201,15 @@ class Seg14x4(HT16K33):
 
         Returns: The output text string to be displayed.
         """
+        if number < 0:
+          raise ValueError("Input underflow: {0} is negative - unable to display!".format(number))
+          
+        # Initialize
         auto_write = self._auto_write
         self._auto_write = False
         txt = ""
-        places = 0
+        dec_places = 0
+        num = number
 
         # Check for floating point numbers (dot > 0)
         stnum = str(number)
@@ -217,54 +222,36 @@ class Seg14x4(HT16K33):
         else:
           whole = stnum_len
           dec_places = 0
-        
-        # Handle floats < 1 and > 0
-        num = number
 
-        # Round the number if the decimal places are too long
-        while whole + dec_places > 4 and dec_places >= 0:
-          dec_places -= 1  ##################
-          num = round(num, dec_places)  #dec_places)
-          
-        print("(1) number = {0}, num = {1}, dot = {2}, whole = {3}, dec_places = {4}".format(number, num, dot, whole, dec_places))
-
-        stnum = str(num)
-        stnum_len = len(stnum)
-        dot = stnum.find(".")
-        
-        if dot > 0:
-          whole = len(stnum[:dot])
-          dec_places = len(stnum[dot + 1:])
-
-          print("(1.5) stnum = '{0}', stnum_len = {1}, dot = {2}, whole = {3}, dec_places = {4}".format(stnum, stnum_len, dot, whole, dec_places))        
-
-          if stnum[dot:] == ".0":
-            stnum = stnum[:dot]
-            dot = stnum.find(".")
+        if auto_round:
+          # Automatically round up to when there is no decimal part
+          while whole + dec_places > 4 and dec_places >= 0:
+            dec_places -= 1
+            num = round(num, dec_places)  #dec_places)
             
-            if dot > 0:
-              whole = len(stnum[:dot])
-              dec_places = len(stnum[dot + 1:])
-        
-        stnum_len = len(stnum)
+          stnum = str(num)
+          stnum_len = len(stnum)
+        elif decimal >= 1:
+          # Round according to the number of decimal places requested
+          num = round(number, decimal)
+          dec_places = decimal
+          stnum = str(num)
+          dot = stnum.find(".")
+          
+          if dot > 0:
+            whole = len(stnum[:dot])
+            stnum = stnum[:dot + decimal + 1]
+            stnum_len = len(stnum)
 
-        print("(2) stnum = '{0}', stnum_len = {1}, dot = {2}, whole = {3}, dec_places = {4}".format(stnum, stnum_len, dot, whole, dec_places))
+        print("(1) number = {0}, num = {1}, decimal = {2}, dot = {3}, whole = {4}, dec_places = {5}".format(number, num, decimal, dot, whole, dec_places))
+        print("(1) stnum = '{0}', stnum_len = {1}".format(stnum, stnum_len))
           
         if whole + dec_places > 5:
-          raise ValueError(
-            "Input overflow - {0} is too large for the display!".format(number)
-            )
+          raise ValueError("Input overflow - '{0}' is too large for the display!".format(number))
             
-        print("(3) whole = {0}, dec_places = {1}, decimal = {2}".format(whole, dec_places, decimal))
-
-        if dec_places < 1 < decimal:
-          self.fill(False)
-          dec_places = 4
-
-          if "." in stnum:
-            dec_places += 1
-
-        print("(4) dec_places = {0}, places = {1}, decimal = {2}".format(dec_places, places, decimal))
+        print("(2) whole = {0}, dec_places = {1}, decimal = {2}".format(whole, dec_places, decimal))
+        
+        print("(3) dec_places = {0}, decimal = {1}".format(dec_places, decimal))
 
         # Set decimal places, if number of decimal places is specified (decimal > 0)
         if dec_places > 0 and dot > 0 and stnum[0] == ".":
@@ -272,11 +259,11 @@ class Seg14x4(HT16K33):
         else:
           txt = stnum
 
-        print("(5) txt = '{0}' len(txt) = {1}".format(txt, len(txt)))
+        print("(4) txt = '{0}' len(txt) = {1}".format(txt, len(txt)))
         print()
         
         if len(txt) > 5:
-            raise ValueError("Output string ('{0}') is too long!".format(txt))
+            raise ValueError("Output string '{0}' is too long!".format(txt))
 
         self._text(txt)
         self._auto_write = auto_write
