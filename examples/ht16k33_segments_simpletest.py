@@ -5,23 +5,41 @@
 # This example and library is meant to work with Adafruit CircuitPython API.
 # Author: Tony DiCola
 # License: Public Domain
-from utime import sleep
-
+from utime import sleep, sleep_ms
+from dotstar import DotStar
 # Import all board pins.
-from machine import SoftI2C, Pin
+from machine import SoftI2C, SoftSPI, Pin
 # Import the HT16K33 LED segment module.
 from hybotics_ht16k33.segments import Seg14x4       # Can also be Seg7x4, BigSeg7x4
 # Import special stuff for tinyPico
-from tinypico import I2C_SDA, I2C_SCL
+from tinypico import set_dotstar_power, dotstar_color_wheel, I2C_SDA, I2C_SCL, DOTSTAR_CLK, DOTSTAR_DATA, SPI_MISO
+from random import random
 
 TP_SDA = Pin(I2C_SDA)
-TP_SCL = Pin(I2C_SCL) 
+TP_SCL = Pin(I2C_SCL)
 
+MOSI = Pin(DOTSTAR_DATA)
+MISO = Pin(SPI_MISO)
+SCLK = Pin(DOTSTAR_CLK)
+
+DOTSTAR_ON_MS = 500
+DOTSTAR_OFF_MS = 500
 DELAY_BETWEEN_SEC = 4
 
 # Create the I2C interface.
 i2c = SoftI2C(sda=TP_SDA, scl=TP_SCL, freq=400000)
+spi = SoftSPI(sck=SCLK, mosi=MOSI, miso=MISO)
 
+dotstar = DotStar(spi, 1, brightness = 0.1)
+set_dotstar_power(True)
+
+# Set the DotStar RGB LED to a random color
+r,g,b = dotstar_color_wheel(int(random() * 255))
+dotstar[0] = (r, g, b, 1)
+sleep_ms(DOTSTAR_ON_MS)
+dotstar[0] = (0, 0, 0, 1)
+sleep_ms(DOTSTAR_OFF_MS)
+    
 # Create the LED segment class.
 # This creates a 7 segment 4 character display:
 # display = Seg7x4(i2c)
@@ -48,7 +66,7 @@ try:
   display.fill(0)
 
   # Can just print a floating point number
-  float_number = 714.4
+  float_number = 2172.5475
   print("Printing a floating point number {0}".format(float_number))
   display.print(float_number, 1)
   sleep(DELAY_BETWEEN_SEC)
@@ -93,6 +111,4 @@ try:
   # Show a looping marquee
   display.marquee("Deadbeef 192.168.100.102... ", 0.2)
 except KeyboardInterrupt:
-  # display.fill(0)
-  led_green.value(False)
-  led_yellow.value(False)
+  print("Exiting")
