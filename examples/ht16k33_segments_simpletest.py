@@ -58,17 +58,17 @@ try:
   # display.fill(0)
   sleep(DELAY_BETWEEN_SEC)
 
-  # Can just print an integer number
-  int_number = 6358
+  # Can just print a floating point number
+  int_number = 33.14546
   print("Printing an integer number {0}".format(int_number))
-  display.print(int_number)
+  display.print(int_number, auto_round=True)
   sleep(DELAY_BETWEEN_SEC)
   display.fill(0)
 
   # Can just print a floating point number
-  float_number = 2172.5475
+  float_number = 179.2545
   print("Printing a floating point number {0}".format(float_number))
-  display.print(float_number, 1)
+  display.print(float_number, decimal=1)
   sleep(DELAY_BETWEEN_SEC)
   display.fill(0)
 
