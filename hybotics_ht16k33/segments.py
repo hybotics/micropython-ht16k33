@@ -1,6 +1,15 @@
 from hybotics_ht16k33.ht16k33 import HT16K33
 from utime import sleep
 
+#   The number of seconds to delay between writing segments
+DEFAULT_CHAR_DELAY_SEC = 0.2
+
+#   The number of cycles to go for each animation
+DEFAULT_CYCLES = 5
+
+#   Brightness of the display (0 to 15)
+DEFAULT_DISPLAY_BRIGHTNESS = 0.3
+
 CHARS = (
     0b00000000, 0b00000000, #
     0b01000000, 0b00000110, # !
@@ -242,25 +251,15 @@ class Seg14x4(HT16K33):
             whole = len(stnum[:dot])
             stnum = stnum[:dot + decimal + 1]
             stnum_len = len(stnum)
-
-        print("(1) number = {0}, num = {1}, decimal = {2}, dot = {3}, whole = {4}, dec_places = {5}".format(number, num, decimal, dot, whole, dec_places))
-        print("(1) stnum = '{0}', stnum_len = {1}".format(stnum, stnum_len))
-          
+         
         if whole + dec_places > 5:
           raise ValueError("Input overflow - '{0}' is too large for the display!".format(number))
-            
-        print("(2) whole = {0}, dec_places = {1}, decimal = {2}".format(whole, dec_places, decimal))
-        
-        print("(3) dec_places = {0}, decimal = {1}".format(dec_places, decimal))
 
         # Set decimal places, if number of decimal places is specified (decimal > 0)
         if dec_places > 0 and dot > 0 and stnum[0] == ".":
           txt = "0" + stnum[dot:]
         else:
           txt = stnum
-
-        print("(4) txt = '{0}' len(txt) = {1}".format(txt, len(txt)))
-        print()
         
         if len(txt) > 5:
             raise ValueError("Output string '{0}' is too long!".format(txt))
@@ -321,6 +320,40 @@ class Seg14x4(HT16K33):
                 sleep(delay)
             char_is_dot = character == "."
             self.show()
+
+    def animate(self, digits, bitmasks, delay=DEFAULT_CHAR_DELAY_SEC, auto_write=True):
+        """
+        Main driver for all alphanumeric display animations.
+            Param: digits - a list of the digits to write to, in order, like [0, 1, 3]. The digits are
+                0 to 3 starting at the left most digit.
+            Param: bitmasks - a list of the bitmasks to write, in sequence, to the specified digits.
+            Param: delay - The delay, in seconds (or fractions of), between writing bitmasks to a digit.
+            Param: auto_write - Whether to actually write to the display immediately or not.
+
+            Returns: Nothing
+        """
+        if not isinstance(digits, list):
+            raise ValueError("The first parameter MUST be a list!")
+        if not isinstance(bitmasks, list):
+            raise ValueError("The second parameter MUST be a list!")
+        if delay < 0:
+            raise ValueError("The delay between frames must be positive!")
+        for dig in digits:
+            if not 0 <= dig <= 3:
+                raise ValueError(
+                    "Digit value must be an integer in the range: 0-3")
+
+            for bits in bitmasks:
+                if not 0 <= bits <= 0xFFFF:
+                    raise ValueError(
+                        "Bitmask value must be an integer in the range: 0-65535"
+    )
+
+                self.set_digit_raw(dig, bits)
+
+                if auto_write:
+                    self.show()
+                    sleep(delay)
 
     @property
     def colon(self):

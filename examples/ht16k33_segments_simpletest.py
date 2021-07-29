@@ -44,7 +44,7 @@ sleep_ms(DOTSTAR_OFF_MS)
 # This creates a 7 segment 4 character display:
 # display = Seg7x4(i2c)
 # Or this creates a 14 segment alphanumeric 4 character display:
-display = Seg7x4(i2c, address=0x75)
+display = Seg7x4(i2c)
 # Or this creates a big 7 segment 4 character display
 # display = BigSeg7x4(i2c)
 # Finally you can optionally specify a custom I2C address of the HT16k33 like:

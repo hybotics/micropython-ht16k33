@@ -56,60 +56,23 @@ i2c = SoftI2C(sda=TP_SDA, scl=TP_SCL, freq=400000)
 display = Seg14x4(i2c, auto_write=False)
 display.brightness = DEFAULT_DISPLAY_BRIGHTNESS
 
-def animate(digits, bitmasks, delay=DEFAULT_CHAR_DELAY_SEC, auto_write=True):
-    """
-    Main driver for all alphanumeric display animations (WIP!!!)
-        Param: digits - a list of the digits to write to, in order, like [0, 1, 3]. The digits are
-            0 to 3 starting at the left most digit.
-        Param: bitmasks - a list of the bitmasks to write, in sequence, to the specified digits.
-        Param: delay - The delay, in seconds (or fractions of), between writing bitmasks to a digit.
-        Param: auto_write - Whether to actually write to the display immediately or not.
-
-        Returns: Nothing
-    """
-    if not isinstance(digits, list):
-        raise ValueError("The first parameter MUST be a list!")
-    if not isinstance(bitmasks, list):
-        raise ValueError("The second parameter MUST be a list!")
-    if delay < 0:
-        raise ValueError("The delay between frames must be positive!")
-    for dig in digits:
-        if not 0 <= dig <= 3:
-            raise ValueError(
-                "Digit value must be \
-            an integer in the range: 0-3"
-            )
-
-        for bits in bitmasks:
-            if not 0 <= bits <= 0xFFFF:
-                raise ValueError(
-                    "Bitmask value must be an \
-                integer in the range: 0-65535"
-                )
-
-            display.set_digit_raw(dig, bits)
-
-            if auto_write:
-                display.show()
-                sleep(delay)
-
 
 def chase_forward_and_reverse(delay=DEFAULT_CHAR_DELAY_SEC, cycles=DEFAULT_CYCLES):
     cy = 0
 
     while cy < cycles:
-        animate([0, 1, 2, 3], [A, 0], delay)
-        animate([3], [B, C, D, 0], delay)
-        animate([2, 1, 0], [D, 0], delay)
-        animate([0], [E, F, H, G2, 0], delay)
-        animate([1, 2], [G1, G2, 0], delay)
-        animate([3], [G1, J, A, 0], delay)
-        animate([2, 1], [A, 0], delay)
-        animate([0], [A, F, E, D, 0], delay)
-        animate([1, 2], [D, 0], delay)
-        animate([3], [D, C, B, J, G1, 0], delay)
-        animate([2, 1], [G2, G1, 0], delay)
-        animate([0], [H, 0], delay)
+        display.animate([0, 1, 2, 3], [A, 0], delay)
+        display.animate([3], [B, C, D, 0], delay)
+        display.animate([2, 1, 0], [D, 0], delay)
+        display.animate([0], [E, F, H, G2, 0], delay)
+        display.animate([1, 2], [G1, G2, 0], delay)
+        display.animate([3], [G1, J, A, 0], delay)
+        display.animate([2, 1], [A, 0], delay)
+        display.animate([0], [A, F, E, D, 0], delay)
+        display.animate([1, 2], [D, 0], delay)
+        display.animate([3], [D, C, B, J, G1, 0], delay)
+        display.animate([2, 1], [G2, G1, 0], delay)
+        display.animate([0], [H, 0], delay)
 
         cy += 1
 
@@ -119,51 +82,51 @@ def prelude_to_spinners(delay=DEFAULT_CHAR_DELAY_SEC, cycles=DEFAULT_CYCLES):
     auto_write = False
 
     while cy < cycles:
-        animate([1, 2], [A], 0, auto_write)
+        display.animate([1, 2], [A], 0, auto_write)
         display.show()
         sleep(delay)
 
-        animate([0, 3], [A], 0, auto_write)
+        display.animate([0, 3], [A], 0, auto_write)
         display.show()
         sleep(delay)
 
-        animate([0], [A + F], 0, auto_write)
-        animate([3], [A + B], 0, auto_write)
+        display.animate([0], [A + F], 0, auto_write)
+        display.animate([3], [A + B], 0, auto_write)
         display.show()
         sleep(delay)
 
-        animate([0], [A + E + F], 0, auto_write)
-        animate([3], [A + B + C], 0, auto_write)
+        display.animate([0], [A + E + F], 0, auto_write)
+        display.animate([3], [A + B + C], 0, auto_write)
         display.show()
         sleep(delay)
 
-        animate([0], [A + D + E + F], 0, auto_write)
-        animate([3], [A + B + C + D], 0, auto_write)
+        display.animate([0], [A + D + E + F], 0, auto_write)
+        display.animate([3], [A + B + C + D], 0, auto_write)
         display.show()
         sleep(delay)
 
-        animate([1], [A + D], 0, auto_write)
-        animate([2], [A + D], 0, auto_write)
+        display.animate([1], [A + D], 0, auto_write)
+        display.animate([2], [A + D], 0, auto_write)
         display.show()
         sleep(delay)
 
-        animate([1], [A + D + M], 0, auto_write)
-        animate([2], [A + D + K], 0, auto_write)
+        display.animate([1], [A + D + M], 0, auto_write)
+        display.animate([2], [A + D + K], 0, auto_write)
         display.show()
         sleep(delay)
 
-        animate([1], [A + D + M + H], 0, auto_write)
-        animate([2], [A + D + K + J], 0, auto_write)
+        display.animate([1], [A + D + M + H], 0, auto_write)
+        display.animate([2], [A + D + K + J], 0, auto_write)
         display.show()
         sleep(delay)
 
-        animate([0], [A + E + F + J + D], 0, auto_write)
-        animate([3], [A + B + C + H + D], 0, auto_write)
+        display.animate([0], [A + E + F + J + D], 0, auto_write)
+        display.animate([3], [A + B + C + H + D], 0, auto_write)
         display.show()
         sleep(delay)
 
-        animate([0], [A + E + F + J + K + D], 0, auto_write)
-        animate([3], [A + B + C + H + M + D], 0, auto_write)
+        display.animate([0], [A + E + F + J + K + D], 0, auto_write)
+        display.animate([3], [A + B + C + H + M + D], 0, auto_write)
         display.show()
         sleep(delay)
 
@@ -179,24 +142,24 @@ def spinners(delay=DEFAULT_CHAR_DELAY_SEC, cycles=DEFAULT_CYCLES):
     auto_write = False
 
     while cy < cycles:
-        animate([0], [H + M], 0, auto_write)
-        animate([1], [J + K], 0, auto_write)
-        animate([2], [H + M], 0, auto_write)
-        animate([3], [J + K], 0, auto_write)
+        display.animate([0], [H + M], 0, auto_write)
+        display.animate([1], [J + K], 0, auto_write)
+        display.animate([2], [H + M], 0, auto_write)
+        display.animate([3], [J + K], 0, auto_write)
         display.show()
         sleep(delay)
 
-        animate([0], [G1 + G2], 0, auto_write)
-        animate([1], [G1 + G2], 0, auto_write)
-        animate([2], [G1 + G2], 0, auto_write)
-        animate([3], [G1 + G2], 0, auto_write)
+        display.animate([0], [G1 + G2], 0, auto_write)
+        display.animate([1], [G1 + G2], 0, auto_write)
+        display.animate([2], [G1 + G2], 0, auto_write)
+        display.animate([3], [G1 + G2], 0, auto_write)
         display.show()
         sleep(delay)
 
-        animate([0], [J + K], 0, auto_write)
-        animate([1], [H + M], 0, auto_write)
-        animate([2], [J + K], 0, auto_write)
-        animate([3], [H + M], 0, auto_write)
+        display.animate([0], [J + K], 0, auto_write)
+        display.animate([1], [H + M], 0, auto_write)
+        display.animate([2], [J + K], 0, auto_write)
+        display.animate([3], [H + M], 0, auto_write)
         display.show()
         sleep(delay)
 
@@ -210,24 +173,24 @@ def enclosed_spinners(delay=DEFAULT_CHAR_DELAY_SEC, cycles=DEFAULT_CYCLES):
     auto_write = False
 
     while cy < cycles:
-        animate([0], [A + D + E + F + H + M], 0, auto_write)
-        animate([1], [A + D + J + K], 0, auto_write)
-        animate([2], [A + D + H + M], 0, auto_write)
-        animate([3], [A + B + C + D + J + K], 0, auto_write)
+        display.animate([0], [A + D + E + F + H + M], 0, auto_write)
+        display.animate([1], [A + D + J + K], 0, auto_write)
+        display.animate([2], [A + D + H + M], 0, auto_write)
+        display.animate([3], [A + B + C + D + J + K], 0, auto_write)
         display.show()
         sleep(delay)
 
-        animate([0], [A + D + E + F + G1 + G2], 0, auto_write)
-        animate([1], [A + D + G1 + G2], 0, auto_write)
-        animate([2], [A + D + G1 + G2], 0, auto_write)
-        animate([3], [A + B + C + D + G1 + G2], 0, auto_write)
+        display.animate([0], [A + D + E + F + G1 + G2], 0, auto_write)
+        display.animate([1], [A + D + G1 + G2], 0, auto_write)
+        display.animate([2], [A + D + G1 + G2], 0, auto_write)
+        display.animate([3], [A + B + C + D + G1 + G2], 0, auto_write)
         display.show()
         sleep(delay)
 
-        animate([0], [A + D + E + F + J + K], 0, auto_write)
-        animate([1], [A + D + H + M], 0, auto_write)
-        animate([2], [A + D + J + K], 0, auto_write)
-        animate([3], [A + B + C + D + H + M], 0, auto_write)
+        display.animate([0], [A + D + E + F + J + K], 0, auto_write)
+        display.animate([1], [A + D + H + M], 0, auto_write)
+        display.animate([2], [A + D + J + K], 0, auto_write)
+        display.animate([3], [A + B + C + D + H + M], 0, auto_write)
         display.show()
         sleep(delay)
 
@@ -248,7 +211,7 @@ def count_down():
     display.fill(0)
 
     while index < len(numbers):
-        animate([index], numbers[index], 0, auto_write)
+        display.animate([index], numbers[index], 0, auto_write)
         display.show()
         sleep(1)
         display.fill(0)
@@ -292,8 +255,8 @@ try:
     while True:
         #   Arrow
         print("Arrow")
-        animate([0, 1, 2], [G1 + G2], 0.1)
-        animate([3], [G1 + H + K], 0.1)
+        display.animate([0, 1, 2], [G1 + G2], 0.1)
+        display.animate([3], [G1 + H + K], 0.1)
         sleep(1.0)
         display.fill(0)
         sleep(1.0)
@@ -303,11 +266,11 @@ try:
         cyc = 0
 
         while cyc < DEFAULT_CYCLES:
-            animate([0], [H + J, G1 + G2, K + M, G1 + G2], DEFAULT_CHAR_DELAY_SEC)
+            display.animate([0], [H + J, G1 + G2, K + M, G1 + G2], DEFAULT_CHAR_DELAY_SEC)
 
             cyc += 1
 
-        animate([0], [0])
+        display.animate([0], [0])
         sleep(1.0)
         display.fill(0)
         sleep(1.0)
