@@ -44,7 +44,7 @@ sleep_ms(DOTSTAR_OFF_MS)
 # This creates a 7 segment 4 character display:
 # display = Seg7x4(i2c)
 # Or this creates a 14 segment alphanumeric 4 character display:
-display = Seg7x4(i2c)
+display = Seg14x4(i2c)
 # Or this creates a big 7 segment 4 character display
 # display = BigSeg7x4(i2c)
 # Finally you can optionally specify a custom I2C address of the HT16k33 like:
@@ -79,11 +79,13 @@ try:
   sleep(DELAY_BETWEEN_SEC)
   display.fill(0)
 
-  time_value = '10:22'
-  print("Printing a time of {0}".format(time_value))
-  display.print(time_value)
-  sleep(DELAY_BETWEEN_SEC)
-  display.fill(0)
+  if isinstance(display, Seg7x4):
+    # Only for the Seg7x4 class - 7 segment, 4 digits
+    time_value = '10:22'
+    print("Printing a time of {0}".format(time_value))
+    display.print(time_value)
+    sleep(DELAY_BETWEEN_SEC)
+    display.fill(0)
 
   # Or, can set indivdual digits / characters
   # Set the first character to '1':
