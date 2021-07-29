@@ -502,3 +502,8 @@ class Colon:
 
         if self._disp.auto_write:
             self._disp.show()
+
+    def __getitem__(self, key):
+        if key > self._num_of_colons - 1:
+            raise ValueError("Trying to access a non-existent colon.")
+        return bool(self._disp._get_buffer(0x04) & self.MASKS[key])
