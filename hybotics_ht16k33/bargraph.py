@@ -10,7 +10,7 @@
 
 """
 
-from adafruit_ht16k33.ht16k33 import HT16K33
+from hybotics_ht16k33.ht16k33 import HT16K33
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_HT16K33.git"
