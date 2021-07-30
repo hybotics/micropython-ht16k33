@@ -51,19 +51,17 @@ display = Seg14x4(i2c)
 # display = BigSeg7x4(i2c)
 # Finally you can optionally specify a custom I2C address of the HT16k33 like:
 # display = Seg7x4(i2c, address=0x70)
+  
+print()
+print("4 Digit, 7 or 14 Segment Display Demo Starting Up - Ctrl/C to Exit")
+print()
+
+# Set the colors for the dotstar LED
+red, green, blue = dotstar_color_wheel(int(random() * 255))
 
 try:
   while True:
-    display.fill(0)
-    red, green, blue = dotstar_color_wheel(int(random() * 255))
     blink_dotstar(dotstar, red, green, blue, wait_on=DOTSTAR_ON_MS, wait_off=DOTSTAR_OFF_MS)
-  
-    print()
-    print("4 Digit, 14 Segment Alphanumeric Demo Starting Up - Ctrl/C to Exit")
-    print()
-    # Clear the display.
-    # display.fill(0)
-    sleep(DELAY_BETWEEN_SEC)
 
     # Can just print a floating point number
     int_number = 3141
@@ -96,6 +94,8 @@ try:
 
     # Or, can set indivdual digits / characters
     # Set the first character to '1':
+
+    print("Setting individual digits / characters")
     display[0] = "1"
     # Set the second character to '2':
     display[1] = "2"
@@ -107,6 +107,7 @@ try:
     display.fill(0)
 
     # Or, can even set the segments to make up characters
+    print("Setting digits using bitmasks")
     if isinstance(display, Seg7x4):
         # 7-segment raw digits
         display.set_digit_raw(0, 0xFF)
@@ -124,8 +125,11 @@ try:
     display.fill(0)
 
     # Show a looping marquee
+    print("Displaying a marquee - can loop or not loop")
     display.marquee("Deadbeef 192.168.100.102... ", 0.2, loop=False)
+    print()
     sleep(DELAY_BETWEEN_SEC)
+    display.fill(0)
 except KeyboardInterrupt:
   display.fill(0)
   print("Exiting")
