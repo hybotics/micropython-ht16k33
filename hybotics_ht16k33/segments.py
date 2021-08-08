@@ -1,3 +1,18 @@
+# SPDX-FileCopyrightText: Radomir Dopieralski 2016  for Adafruit Industries
+# SPDX-FileCopyrightText: Tony DiCola 2016 for Adafruit Industries
+# SPDX-FileCopyrightText: Dale Weber 2021
+#
+# SPDX-License-Identifier: MIT
+
+"""
+Segment Displays
+=================
+* Ported to Micropython by Dale Weber <hybotics.wy@gmail.com>
+"""
+
+__version__ = "0.0.0-auto.0"
+__repo__ = "https://github.com/hybotics/Hybotics_Micropython_HT16K33.git"
+
 from hybotics_ht16k33.ht16k33 import HT16K33
 from utime import sleep
 
