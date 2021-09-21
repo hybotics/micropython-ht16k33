@@ -18,7 +18,7 @@ __repo__ = "https://github.com/hybotics/Hybotics_Micropython_HT16K33.git"
 
 from micropython import const
 from utime import sleep
-from adafruit_bus_device import i2c_device
+from adafruit_bus_device.i2c_device import I2CDevice
 
 _HT16K33_BLINK_CMD = const(0x80)
 _HT16K33_BLINK_DISPLAYON = const(0x01)
@@ -32,7 +32,7 @@ class HT16K33:
     """The base class for all HT16K33-based backpacks and wings."""
 
     def __init__(self, i2c, address=0x70, auto_write=True, brightness=1.0):
-        self.i2c_device = i2c_device.I2CDevice(i2c, address)
+        self.i2c_device = I2CDevice(i2c, address)
         self._temp = bytearray(1)
         self._buffer = bytearray(17)
         self._auto_write = auto_write

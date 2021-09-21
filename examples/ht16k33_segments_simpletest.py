@@ -29,7 +29,7 @@ DOTSTAR_OFF_MS = 650
 DELAY_BETWEEN_SEC = 4
 DEFAULT_CHAR_DELAY_SEC = 0.2
 DEFAULT_DISPLAY_BRIGHTNESS = 0.1
-  
+
 # Create the I2C interface.
 i2c = SoftI2C(sda=TP_SDA, scl=TP_SCL, freq=400000)
 spi = SoftSPI(sck=SCLK, mosi=MOSI, miso=MISO)
@@ -41,17 +41,17 @@ def blink_dotstar(dstar, red, green, blue, wait_on=DOTSTAR_ON_MS, wait_off=DOTST
   sleep_ms(wait_on)
   dstar[0] = (0, 0, 0, 1)
   sleep_ms(wait_off)
-    
+
 # Create the LED segment class.
 # This creates a 7 segment 4 character display:
-# display = Seg7x4(i2c)
+# display = Seg7x4(i2c, address=0x76)
 # Or this creates a 14 segment alphanumeric 4 character display:
-display = Seg14x4(i2c)
+display = Seg14x4(i2c=0x70)
 # Or this creates a big 7 segment 4 character display
 # display = BigSeg7x4(i2c)
 # Finally you can optionally specify a custom I2C address of the HT16k33 like:
 # display = Seg7x4(i2c, address=0x70)
-  
+
 print()
 print("4 Digit, 7 or 14 Segment Display Demo Starting Up - Ctrl/C to Exit")
 print()
