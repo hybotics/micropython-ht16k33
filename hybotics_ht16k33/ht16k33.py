@@ -18,7 +18,6 @@ __repo__ = "https://github.com/hybotics/Hybotics_Micropython_HT16K33.git"
 
 from micropython import const
 from utime import sleep
-from adafruit_bus_device.i2c_device import I2CDevice
 
 _HT16K33_BLINK_CMD = const(0x80)
 _HT16K33_BLINK_DISPLAYON = const(0x01)
@@ -32,7 +31,8 @@ class HT16K33:
     """The base class for all HT16K33-based backpacks and wings."""
 
     def __init__(self, i2c, address=0x70, auto_write=True, brightness=1.0):
-        self.i2c_device = I2CDevice(i2c, address)
+        self.i2c = i2c
+        self.address = address
         self._temp = bytearray(1)
         self._buffer = bytearray(17)
         self._auto_write = auto_write
@@ -46,8 +46,7 @@ class HT16K33:
 
     def _write_cmd(self, byte):
         self._temp[0] = byte
-        with self.i2c_device:
-            self.i2c_device.write(self._temp)
+        self.i2c.writeto(self.address, bytes(self._temp))
 
     @property
     def blink_rate(self):
@@ -93,10 +92,7 @@ class HT16K33:
 
     def show(self):
         """Refresh the display and show the changes."""
-        with self.i2c_device:
-            # Byte 0 is 0x00, address of LED data register. The remaining 16
-            # bytes are the display register data to set.
-            self.i2c_device.write(self._buffer)
+        self.i2c.writeto(self.address, bytes(self._buffer))
 
     def fill(self, color):
         """Fill the whole display with the given color."""
